@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Formulario de Ubicación</title>
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        /* Estilo para hacer que el formulario y los datos sean responsivos */
+        @media (min-width: 576px) {
+            #formContainer {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            #ubicacionForm {
+                flex: 0 0 48%; /* Ancho del formulario */
+            }
+
+            #datosSeleccionados {
+                flex: 0 0 48%; /* Ancho de los datos seleccionados */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Formulario de Ubicación</h2>
+        <div id="formContainer">
+            <form id="ubicacionForm">
+                <div class="form-group">
+                    <label for="paisSelect">País:</label>
+                    <select class="form-control" id="paisSelect" onchange="cargarEstados()">
+                        <option value="Mexico">México</option>
+                        <option value="otro">Estados Unidos</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="estadoSelect">Estado:</label>
+                    <select class="form-control" id="estadoSelect" onchange="cargarMunicipios()">
+                        <!-- Estados de México -->
+                        <option value="Hidalgo">Hidalgo</option>
+                        <option value="Queretaro">Querétaro</option>
+                        <!-- Estados de Otro País -->
+                        <!--<option value="otroestado" style="display: none;">Otro Estado</option>-->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="municipioSelect">Municipio:</label>
+                    <select class="form-control" id="municipioSelect" onchange="cargarLocalidades()">
+                        <!-- Municipios de Hidalgo -->
+                        <option value="tula">Tula</option>
+                        <option value="atotonilco">Atotonilco de Tula</option>
+                        <option value="tepeji">Tepeji</option>
+                        <!-- Municipios de Otro Estado -->
+                        <option value="otromunicipio" style="display: none;">Otro Municipio</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="localidadSelect">Localidad:</label>
+                    <select class="form-control" id="localidadSelect">
+                        <!-- Localidades de Tula -->
+                        <option value="sanmarcos">San Marcos</option>
+                        <option value="elllano">El Llano</option>
+                        <option value="iturbe">Iturbe</option>
+                        <!-- Localidades de Atotonilco -->
+                        <option value="refugio">Refugio</option>
+                        <option value="conejos">Conejos</option>
+                        <option value="bovedas">Bovedas</option>
+                        <!-- Localidades de Tepeji -->
+                        <option value="sanildefonso">San Idelfonso</option>
+                        <option value="tiangistengo">Tiangistengo</option>
+                        <option value="melchorocampo">Melchor Ocampo</option>
+                        <!-- Localidades de Otro Municipio -->
+                        <option value="otralocalidad" style="display: none;">Otra Localidad</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn btn-danger" onclick="mostrarDatos()">Enviar</button>
+            </form>
+
+            <div id="datosSeleccionados" style="margin-top: 20px; display: none;">
+                <h3>Datos Seleccionados:</h3>
+                <p id="paisSeleccionado"></p>
+                <p id="estadoSeleccionado"></p>
+                <p id="municipioSeleccionado"></p>
+                <p id="localidadSeleccionada"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function cargarEstados() {
+            var paisSelect = document.getElementById("paisSelect");
+            var estadoSelect = document.getElementById("estadoSelect");
+            var otroEstadoOption = document.querySelector("#estadoSelect option[value='otroestado']");
+
+            if (paisSelect.value === "Mexico") {
+                otroEstadoOption.style.display = "none";
+            } else {
+                otroEstadoOption.style.display = "block";
+            }
+        }
+
+        function cargarMunicipios() {
+            var estadoSelect = document.getElementById("estadoSelect");
+            var municipioSelect = document.getElementById("municipioSelect");
+            var otroMunicipioOption = document.querySelector("#municipioSelect option[value='otromunicipio']");
+
+            if (estadoSelect.value === "Hidalgo") {
+                otroMunicipioOption.style.display = "none";
+            } else {
+                otroMunicipioOption.style.display = "block";
+            }
+        }
+
+        function cargarLocalidades() {
+            var municipioSelect = document.getElementById("municipioSelect");
+            var localidadSelect = document.getElementById("localidadSelect");
+
+            // Limpia las opciones actuales
+            localidadSelect.innerHTML = "";
+
+            // Obtén el valor seleccionado del municipio
+            var municipioSeleccionado = municipioSelect.value;
+
+            // Agrega las opciones de localidades según el municipio seleccionado
+            switch (municipioSeleccionado) {
+                case "tula":
+                    agregarOpcionesLocalidades(["San Marcos", "El Llano", "Iturbe"]);
+                    break;
+                case "atotonilco":
+                    agregarOpcionesLocalidades(["Refugio", "Conejos", "Bovedas"]);
+                    break;
+                case "tepeji":
+                    agregarOpcionesLocalidades(["San Ildefonso", "Tiangistengo", "Melchor Ocampo"]);
+                    break;
+                // Puedes agregar más casos según los municipios necesarios
+                default:
+                    agregarOpcionesLocalidades(["otralocalidad"]);
+            }
+        }
+
+        function agregarOpcionesLocalidades(localidades) {
+            var localidadSelect = document.getElementById("localidadSelect");
+
+            // Agrega las opciones al select de localidades
+            localidades.forEach(function (localidad) {
+                var option = document.createElement("option");
+                option.value = localidad;
+                option.text = localidad.charAt(0).toUpperCase() + localidad.slice(1); // Capitaliza la primera letra
+                localidadSelect.add(option);
+            });
+        }
+
+        function mostrarDatos() {
+            var paisSeleccionado = document.getElementById("paisSelect").value;
+            var estadoSeleccionado = document.getElementById("estadoSelect").value;
+            var municipioSeleccionado = document.getElementById("municipioSelect").value;
+            var localidadSeleccionada = document.getElementById("localidadSelect").value;
+
+            document.getElementById("paisSeleccionado").innerText = "País: " + paisSeleccionado;
+            document.getElementById("estadoSeleccionado").innerText = "Estado: " + estadoSeleccionado;
+            document.getElementById("municipioSeleccionado").innerText = "Municipio: " + municipioSeleccionado;
+            document.getElementById("localidadSeleccionada").innerText = "Localidad: " + localidadSeleccionada;
+
+            document.getElementById("datosSeleccionados").style.display = "block";
+        }
+    </script>
+
+
+</body>
+</html>
